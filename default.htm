@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--
+  This is a sample HTML file which shows how to use speech in the Web Chat control.
+  1. Start a web server. One way to do so is to use npm http-server at a Node.js command prompt.
+       * To install http-server globally so it can be run from the command line, run this command:
+             npm install http-server- -g
+       * To start a web server using port 8000, from the directory that contains this file, run this command:
+             http-server -p 8000
+  2. Open this file by pointing your browser at "http://localhost:8000/index.html?[parameters as listed below]"
+  For ease of testing, several parameters can be set in the query string:
+
+    * s = Direct Line secret, or
+    * t = Direct Line token (obtained by calling Direct Line's Generate Token)
+    * domain = optionally, the URL of an alternate Direct Line endpoint
+    * webSocket = set to 'true' to use WebSocket to receive messages (currently defaults to false)
+    * userid, username = id (and optionally name) of bot user
+    * botid, botname = id (and optionally name) of bot
+  For example, if the Direct Line secret for your bot is xxxMySecret.xxx, then open the following URL in your browser
+  http://localhost:8000/index.html?s=xxxMySecret.xxx
+  USE THIS FOR SPEECH RECOGNITION MICROPHONE TO WORK: https://pandaiwebappbot.azurewebsites.net/default.htm?s=9fazsJ1XoZQ.cwA.KVw.fLgMNYlNKVpEsmdo5rqSY0LQd7eQ3OP4ioCkpvycmQU
+  You have a few options to choose from for speech recognition. See definition of speechOptions in the following code,
+  and uncomment the option you want to choose.
+
+  For more information on how to use the Web Chat control with speech recognition, see https://docs.microsoft.com/en-us/bot-framework/channel-connect-webchat-speech
+-->
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bot Chat</title>
+
+    <link href="https://cdn.botframework.com/botframework-webchat/latest/botchat.css" rel="stylesheet" />
+
+    <style>
+        .example {
+            float: left;
+            margin-right: 20px;
+            width: 300px;
+        }
+
+            .example > h2 {
+                font-family: 'Segoe UI';
+            }
+
+        #BotChatGoesHere {
+            border: 1px solid #333;
+            float: left;
+            height: 500px;
+            position: relative;
+            width: 500px;
+            /*margin-right: 15em;
+            margin-left: 15em;*/
+        }
+    </style>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template -->
+    <link href="css/freelancer.min.css" rel="stylesheet">
+    
+</head>
+<body>
+  
+  <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Pandai</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item mx-0 mx-lg-1">
+              <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">My Profile</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="masthead bg-primary text-white text-center mb-0">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <img class="img-fluid mb-5 d-block mx-auto" src="img/profile.png" alt="">
+            <h3 class="text-uppercase mb-0">What can I help you with?</h3>
+            <hr class="star-light">
+          </div>
+          <div class="col-md-9" id="BotChatGoesHere">
+                
+          </div>
+            <!--<h2 class="font-weight-light mb-0">Web Developer - Graphic Artist - User Experience Designer</h2>-->
+        </div>
+        <div class="row mt-5 pt-5">
+          <div class="col-md-4 border" style="height:200px">
+            <h2 class="font-weight-light mb-0">Homework Due</h2>
+          </div>
+          <div class="col-md-4 border" style="height:200px">
+            <h2 class="font-weight-light mb-0">Tasks this Week</h2>
+          </div>
+          <div class="col-md-4 border" style="height:200px">
+            <h2 class="font-weight-light mb-0">My Progress</h2>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <section class="example">
+        <!--<h2>Web Chat with speech</h2>
+        <p>
+            This sample shows the various options for enabling speech recognition and speech synthesis in the Web Chat
+        </p>-->
+    </section>
+
+    <!--<div id="BotChatGoesHere"></div>-->
+
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/botchat.js"></script>
+
+    <!-- If you do not want to use Cognitive Services library, comment out the following line -->
+    <script src="https://cdn.botframework.com/botframework-webchat/latest/CognitiveServices.js"></script>
+
+    <script>
+      const params = BotChat.queryParams(location.search);
+      const user = {
+        id: params['userid'] || 'userid',
+        name: params['username'] || 'username'
+      };
+      const bot = {
+        id: params['botid'] || 'botid',
+        name: params['botname'] || 'botname'
+      };
+      window.botchatDebug = params['debug'] && params['debug'] === 'true';
+      
+      const speechOptions = {
+        speechRecognizer: new CognitiveServices.SpeechRecognizer({ subscriptionKey: '5553e109a36c42b588de3fc190a3851b' }),
+        speechSynthesizer: new CognitiveServices.SpeechSynthesizer({
+          gender: CognitiveServices.SynthesisGender.Female, 
+          subscriptionKey: '5553e109a36c42b588de3fc190a3851b',
+          voiceName: 'Microsoft Server Speech Text to Speech Voice (en-US, JessaRUS)'
+        })
+      };
+      
+      //
+      // // Option 4: Cognitive Services speech recognition using a token (usually generated in a secure backend using your API key)
+      //
+      // function getToken() {
+      //   // Normally this token fetch is done from your secured backend to avoid exposing the API key and this call
+      //   // would be to your backend, or to retrieve a token that was served as part of the original page.
+      //   return fetch(
+      //     'https://api.cognitive.microsoft.com/sts/v1.0/issueToken',
+      //     {
+      //       headers: {
+      //         'Ocp-Apim-Subscription-Key': 'YOUR_COGNITIVE_SPEECH_API_KEY'
+      //       },
+      //       method: 'POST'
+      //     }
+      //   ).then(res => res.text());
+      // }
+      // const speechOptions = {
+      //   speechRecognizer: new CognitiveServices.SpeechRecognizer({
+      //     fetchCallback: (authFetchEventId) => getToken(),
+      //     fetchOnExpiryCallback: (authFetchEventId) => getToken()
+      //   }),
+      //   speechSynthesizer: new BotChat.Speech.BrowserSpeechSynthesizer()
+      // };
+      // // Option 5: Your own custom implementations of ISpeechRecognizer and ISpeechSynthesizer
+      //
+      // const speechOptions = {
+      //   speechRecognizer: new YourOwnSpeechRecognizer(),
+      //   speechSynthesizer: new YourOwnSpeechSynthesizer()
+      // };
+      BotChat.App({
+        bot: bot,
+        locale: params['locale'],
+        resize: 'detect',
+        // sendTyping: true,    // defaults to false. set to true to send 'typing' activities to bot (and other users) when user is typing
+        speechOptions: speechOptions,
+        user: user,
+        directLine: {
+          domain: params['domain'],
+          secret: params['s'],
+          token: params['t'],
+          webSocket: params['webSocket'] && params['webSocket'] === 'true' // defaults to true
+        }
+      }, document.getElementById('BotChatGoesHere'));
+    </script>
+</body>
+</html>
+
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body style="font-family:'Segoe UI'">
+    <div>
+        <h1>Chat Bot</h1>
+        <iframe src='https://webchat.botframework.com/embed/PandaiWebAppBot?s=HaFeBqi4tMI.cwA.j5o.zaqESQXSFcJxlT9FvqKdOEPAbJjz9pj9MGqKneyNLMs'></iframe>    
+    </div>
+    
+   <h1>QnABot Template</h1>
+    <p>A bot that distills information into conversational, easy-to-navigate answers. </p>
+    <p>Here are some handy links to get started:</p>
+    <p>
+        <ul>
+            <li><a href="https://docs.microsoft.com/en-us/bot-framework/dotnet/bot-builder-dotnet-overview">Get started building bots with .NET.</a></li>
+            <li><a href="https://docs.microsoft.com/en-us/bot-framework/azure/azure-bot-service-template-question-and-answer">Learn more about this template.</a></li>
+            <li><a href="https://qnamaker.ai/">Visit the QnA Maker portal.</a></li>
+            <li><a href="https://docs.microsoft.com/en-us/bot-framework/azure/azure-bot-service-continuous-deployment#set-up-continuous-deployment">Get the bot code and setup continuous deployment.</a></li>
+            <li><a href="https://docs.microsoft.com/en-us/bot-framework/debug-bots-emulator">Debug your bot.</a></li>
+        </ul>
+    </p>
+</body>
+</html>-->
